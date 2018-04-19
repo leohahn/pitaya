@@ -390,7 +390,6 @@ func hbdEncode(heartbeatTimeout time.Duration, packetEncoder codec.PacketEncoder
 		if len(compressedData) < len(data) {
 			data = compressedData
 		}
-
 	}
 
 	hrd, err = packetEncoder.Encode(packet.Handshake, data)
