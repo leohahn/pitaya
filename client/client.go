@@ -71,7 +71,7 @@ type Client struct {
 	pendingChan     chan bool
 	closeChan       chan struct{}
 	nextID          uint32
-	dataCompression bool
+	messageEncoder  message.MessageEncoder
 }
 
 // New returns a new client
@@ -89,7 +89,7 @@ func New(logLevel logrus.Level) *Client {
 		packetChan:      make(chan *packet.Packet, 10),
 		IncomingMsgChan: make(chan *message.Message, 10),
 		pendingChan:     make(chan bool, 30),
-		dataCompression: true,
+		messageEncoder:  message.NewEncoder(true),
 	}
 }
 
@@ -270,7 +270,7 @@ func (c *Client) sendMsg(msgType message.Type, route string, data []byte) error 
 		Data:  data,
 		Err:   false,
 	}
-	encMsg, err := m.Encode(c.dataCompression)
+	encMsg, err := c.messageEncoder.Encode(&m)
 	if err != nil {
 		return err
 	}
